@@ -7,17 +7,24 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wetter">
 <title>Wetter Overlay</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  /* Motora Sans Medium: nutzt zuerst die auf dem System installierte Schrift,
+     sonst eine Datei neben dieser HTML-Datei (MotoraSans-Medium.woff2/.ttf). */
+  @font-face{
+    font-family:'Motora Sans';
+    font-weight:500;font-style:normal;font-display:swap;
+    src:local('Motora Sans Medium'), local('MotoraSans-Medium'), local('Motora Sans'),
+        url('MotoraSans-Medium.woff2') format('woff2'),
+        url('MotoraSans-Medium.ttf')   format('truetype');
+  }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%}
   body{
     background:transparent;
     overflow:hidden;
     color:#fff;
-    font-family:'Barlow',system-ui,-apple-system,sans-serif;
+    font-family:'Motora Sans',system-ui,-apple-system,sans-serif;
+    font-weight:500;
     display:flex;align-items:flex-start;justify-content:flex-start;
     padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right))
             max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));
@@ -25,8 +32,6 @@
   }
   body[data-align="right"]{justify-content:flex-end}
   body[data-align="center"]{justify-content:center}
-  /* Ohne OBS (iPad/Browser) braucht die weiße Schrift einen dunklen Grund */
-  body.solo{background:#101216;align-items:center;justify-content:center}
 
   .wx{
     display:flex;align-items:center;gap:16px;
@@ -41,19 +46,15 @@
 
   .text{display:flex;flex-direction:column;gap:2px;line-height:1}
   .city{
-    font-family:'Barlow Condensed','Barlow',sans-serif;
-    font-size:calc(var(--icon,58px)*.29);
-    font-weight:500;letter-spacing:.2em;text-transform:uppercase;
+    font-size:calc(var(--icon,58px)*.28);
+    letter-spacing:.2em;text-transform:uppercase;
     opacity:.82;white-space:nowrap;
   }
   .now{
     font-size:calc(var(--icon,58px)*.42);
-    font-weight:400;white-space:nowrap;letter-spacing:.005em;
+    white-space:nowrap;letter-spacing:.005em;
   }
-  .now .deg{
-    font-family:'Barlow Condensed','Barlow',sans-serif;
-    font-weight:500;font-variant-numeric:tabular-nums;
-  }
+  .now .deg{font-variant-numeric:tabular-nums}
   .now .sep{opacity:.45;margin:0 .5em}
 
   .status{font-size:14px;color:rgba(255,255,255,.7);letter-spacing:.02em}
@@ -80,8 +81,7 @@
 
 <script>
 /* ------------------------------------------------------------------
-   Läuft unverändert in OBS (transparent) und im Browser/auf dem iPad
-   (dunkler Grund, damit die weiße Schrift lesbar bleibt).
+   Hintergrund ist überall transparent – in OBS wie im Browser.
    Parameter: ?lat= &lon= &city= &refresh= (Sekunden) &align=left|center|right
               &size= (Icon-Höhe in px, Standard 58)
 ------------------------------------------------------------------ */
@@ -96,7 +96,6 @@ const CFG = {
 };
 document.body.dataset.align = CFG.align;
 document.documentElement.style.setProperty('--icon', CFG.size + 'px');
-if(!window.obsstudio) document.body.classList.add('solo');
 
 /* ---------- Icons ---------- */
 const cloudPath = 'M20 44h22a9 9 0 0 0 .6-18 13 13 0 0 0-24.4-3A9.5 9.5 0 0 0 20 44Z';
